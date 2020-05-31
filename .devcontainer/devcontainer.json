@@ -1,0 +1,22 @@
+{
+  "name": "vsc-java",
+  "dockerFile": "Dockerfile",
+  "forwardPorts": [8080, 4200],
+  "appPort": ["8080:8080", "4200:4200"],
+  "extensions": [
+    "vscjava.vscode-java-pack",
+    "shengchen.vscode-checkstyle",
+    "pivotal.vscode-spring-boot",
+    "pivotal.vscode-boot-dev-pack",
+    "vscjava.vscode-spring-initializr",
+    "richardwillis.vscode-gradle",
+    "naco-siren.gradle-language",
+    "johnpapa.angular-essentials",
+    "gabrielbb.vscode-lombok",
+    "gabrielbb.vscode-lombok",
+    "ms-azuretools.vscode-docker",
+    "ms-vscode.vscode-typescript-tslint-plugin",
+    "steoates.autoimport",
+    "alexiv.vscode-angular2-files"
+  ]
+}
