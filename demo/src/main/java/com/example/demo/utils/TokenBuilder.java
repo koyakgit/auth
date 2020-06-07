@@ -32,12 +32,12 @@ public class TokenBuilder {
         return JWT.create()
             // registered claims
             //.withJWTId("jwtId")        //"jti" : JWT ID
-            //.withAudience("audience")  //"aud" : Audience
-            //.withIssuer("issuer")      //"iss" : Issuer
-            .withSubject("test")         //"sub" : Subject
-            .withIssuedAt(issuedAt)      //"iat" : Issued At
-            .withNotBefore(notBefore)    //"nbf" : Not Before
-            .withExpiresAt(expiresAt)    //"exp" : Expiration Time
+            //.withAudience("audience")  //"aud" : Audience JWTの利用者
+            //.withIssuer("issuer")      //"iss" : Issuer   JWTの発行者
+            .withSubject("test")         //"sub" : Subject  JWTの主体. JWTの発行者のコンテキスト内でユニークまたはグローバルユニークな値
+            .withIssuedAt(issuedAt)      //"iat" : Issued At JWTの発行時間
+            .withNotBefore(notBefore)    //"nbf" : Not Before JWTの有効期間（開始）
+            .withExpiresAt(expiresAt)    //"exp" : Expiration Time JWTの有効期間（終了）
             //private claims
             .withClaim("X-AUTHORITIES", "aaa")
             .withClaim("X-USERNAME", "bbb")
@@ -68,6 +68,5 @@ public class TokenBuilder {
         String username = jwt.getClaim("X-USERNAME").asString();
         System.out.println("private claim  X-AUTHORITIES : [" + authorities + "] X-USERNAME : [" + username + "]");
         // private claim  X-AUTHORITIES : [aaa] X-USERNAME : [bbb]
-        }
     }
 }

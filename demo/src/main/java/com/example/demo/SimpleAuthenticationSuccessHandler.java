@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.example.demo.domain.model.UserDetailsAdapter;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -45,7 +46,7 @@ public class SimpleAuthenticationSuccessHandler implements AuthenticationSuccess
     private static final Long EXPIRATION_TIME = 1000L * 60L * 10L;
 
     private String generateToken(Authentication auth) {
-        SimpleLoginUser loginUser = (SimpleLoginUser) auth.getPrincipal();
+        UserDetailsAdapter loginUser = (UserDetailsAdapter) auth.getPrincipal();
         Date issuedAt = new Date();
         Date notBefore = new Date(issuedAt.getTime());
         Date expiresAt = new Date(issuedAt.getTime() + EXPIRATION_TIME);
@@ -53,7 +54,7 @@ public class SimpleAuthenticationSuccessHandler implements AuthenticationSuccess
                 .withIssuedAt(issuedAt)
                 .withNotBefore(notBefore)
                 .withExpiresAt(expiresAt)
-                .withSubject(loginUser.getUser().getId().toString())
+                .withSubject(loginUser.getUserModel().getLoginId())
                 .sign(this.algorithm);
         log.debug("generate token : {}", token);
         return token;

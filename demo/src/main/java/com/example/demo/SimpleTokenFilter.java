@@ -1,7 +1,7 @@
 package com.example.demo;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.util.Objects;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -15,6 +15,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
+import com.example.demo.domain.model.UserDetailsAdapter;
+import com.example.demo.domain.repository.UserRepository;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,17 +28,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SimpleTokenFilter extends GenericFilterBean {
 
-    final private UserRepository userRepository;
-    final private Algorithm algorithm;
+    private final UserRepository userRepository;
+    private final AppConfig appConfig;
+    private final Algorithm algorithm;
 
-    public SimpleTokenFilter(UserRepository userRepository, String secretKey) {
+    public SimpleTokenFilter(UserRepository userRepository, String secretKey, AppConfig appConfig) {
         Objects.requireNonNull(secretKey, "secret key must be not null");
         this.userRepository = userRepository;
-        try {
-            this.algorithm = Algorithm.HMAC256(secretKey);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        this.appConfig = appConfig;
+        this.algorithm = Algorithm.HMAC256(secretKey);
     }
 
     @Override
@@ -71,10 +71,12 @@ public class SimpleTokenFilter extends GenericFilterBean {
     }
 
     private void authentication(DecodedJWT jwt) {
-        Long userId = Long.valueOf(jwt.getSubject());
-        userRepository.findById(userId).ifPresent(user -> {
-            SimpleLoginUser simpleLoginUser = new SimpleLoginUser(user);
-            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(simpleLoginUser, null, simpleLoginUser.getAuthorities()));
+        final String loginId = jwt.getSubject();
+        userRepository.findOneByLoginId(loginId).ifPresent(user -> {
+            UserDetailsAdapter simpleLoginUser = new UserDetailsAdapter(user, this.appConfig);
+            SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(
+                    simpleLoginUser, null, simpleLoginUser.getAuthorities()));
         });
     }
 
