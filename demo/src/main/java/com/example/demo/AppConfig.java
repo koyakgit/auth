@@ -11,6 +11,6 @@ public class AppConfig {
     /**
      * 許容するログインリトライ回数
      */
-    @Value("security.limit.login.retry.count")
+    @Value("#{new Integer('${security.limit-login-retry-count}')}")
     private Integer limitLoginRetryCount = Integer.MAX_VALUE;
 }

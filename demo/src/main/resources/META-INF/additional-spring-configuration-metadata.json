@@ -1,5 +1,12 @@
-{"properties": [{
-  "name": "security.secret-key",
-  "type": "java.lang.String",
-  "description": "A description for 'security.secret-key'"
-}]}
+{"properties": [
+  {
+    "name": "security.secret-key",
+    "type": "java.lang.String",
+    "description": "A description for 'security.secret-key'"
+  },
+  {
+    "name": "security.limit-login-retry-coun",
+    "type": "java.lang.Integer",
+    "description": "A description for 'Limitation of login retry count.'"
+  }
+]}
