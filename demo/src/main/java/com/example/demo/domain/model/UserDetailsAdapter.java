@@ -1,8 +1,12 @@
 package com.example.demo.domain.model;
 
-import com.example.demo.AppConfig;
-import com.example.demo.utils.AuthorityUtils;
+import java.util.List;
 
+import com.example.demo.AppConfig;
+// import com.example.demo.utils.AuthorityUtils;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 
 import lombok.Getter;
@@ -15,16 +19,19 @@ public class UserDetailsAdapter extends User {
     @Getter
     private final UserModel userModel;
 
-    public UserDetailsAdapter(UserModel user, AppConfig appConfig) {
+    private static final List<GrantedAuthority> USER_ROLES = AuthorityUtils.createAuthorityList("ROLE_USER");
+    private static final List<GrantedAuthority> ADMIN_ROLES = AuthorityUtils.createAuthorityList("ROLE_ADMIN", "ROLE_USER");
+
+    public UserDetailsAdapter(UserModel userModel, AppConfig appConfig) {
         super(
-            user.getLoginId(), 
-            user.getPassword(), 
-            user.getIsEnable(), 
-            !isExpired(user, appConfig), 
-            !isCredencialExpired(user, appConfig),
-            !isLocked(user, appConfig), 
-            AuthorityUtils.getAuthorities(user.getRole()));
-        this.userModel = user;
+            userModel.getLoginId(), 
+            userModel.getPassword(), 
+            userModel.getIsEnable(), 
+            !isExpired(userModel, appConfig), 
+            !isCredencialExpired(userModel, appConfig),
+            !isLocked(userModel, appConfig), 
+            USER_ROLES);
+        this.userModel = userModel;
     }
 
     private static boolean isExpired(UserModel user, AppConfig appConfig) {

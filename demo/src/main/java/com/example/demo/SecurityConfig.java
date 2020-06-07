@@ -35,8 +35,12 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.web.filter.GenericFilterBean;
 
 /**
- * セキュリティ設定クラス
+ * <p>セキュリティ設定クラス</p>
+ * トークン発行テストコマンド：curl -i -X POST "http://localhost:8080/login" -d "loginId=test" -d "password=password"
+ * トークン適用テストコマンド：curl -i -H "Authorization: Bearer {token}" "http://localhost:8080/user/"
+ * トークン適用テストコマンド：curl -i -X POST -H "Authorization: Bearer {token}" "http://localhost:8080/user/echo" -d "message={'aaa':'bbb'}"
  * @see https://spring.io/guides/gs/securing-web/
+ * 
  */
 @Configuration
 @EnableWebSecurity
@@ -60,9 +64,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/hello/**")
                     .permitAll()
                 .mvcMatchers("/user/**")
-                    .hasRole(UserRole.USER.toString())
+                    .hasRole("USER")
                 .mvcMatchers("/admin/**")
-                    .hasRole(UserRole.ADMIN.toString())
+                    .hasRole("ADMIN")
                 .anyRequest()
                     .authenticated()
             .and()
@@ -74,8 +78,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             // LOGIN
             .formLogin()
                 .loginProcessingUrl("/login").permitAll()
-                    .usernameParameter("email")
-                    .passwordParameter("pass")
+                    .usernameParameter("loginId")
+                    .passwordParameter("password")
                 .successHandler(authenticationSuccessHandler())
                 .failureHandler(authenticationFailureHandler())
             .and()
@@ -110,6 +114,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     PasswordEncoder passwordEncoder() {
+        // 以下のページで強く進められていたのでArgon2を使ってパスワードエンコーディングを行う
+        // https://medium.com/analytics-vidhya/password-hashing-pbkdf2-scrypt-bcrypt-and-argon2-e25aaf41598e
+        // int saltLength = 16; // salt length in bytes
+        // int hashLength = 32; // hash length in bytes
+        // int parallelism = 1; // currently not supported by Spring Security
+        // int memory = 4096; // memory costs
+        // int iterations = 3;
+        // return new Argon2PasswordEncoder(saltLength, hashLength, parallelism, memory, iterations);
+        // return new SCryptPasswordEncoder(32, 4096, 1, 16, 16);
+        // return new Pbkdf2PasswordEncoder(this.secretKey);
+
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
@@ -139,6 +154,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public UserRepository userRepository() {
+        
+        
+
         return new UserRepository(){
         
             @Override
@@ -248,13 +266,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         
             @Override
             public Optional<UserModel> findOneByLoginId(String loginId) {
+                final String encodedPw = passwordEncoder().encode("password");
                 final UserModel user = new UserModel();
                 user.setIsEnable(true);
                 user.setLastUpdateDate(new Date());
                 user.setLoginId("test");
                 user.setLoginRetryCount(99);
                 user.setName("Judy");
-                user.setPassword("password");
+                user.setPassword(encodedPw);
                 user.setRole(UserRole.USER.toString());
 
                 return Optional.of(user);

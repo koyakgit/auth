@@ -1,30 +1,35 @@
 package com.example.demo.application;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import java.util.Map;
 
-// @RestController
-@Controller
-@RequestMapping("/")
+import com.example.demo.domain.model.UserDetailsAdapter;
+
+import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(path = "user")
 public class AuthController {
 
-    public String test() {
-        return "Hello, world.";
+    @GetMapping
+    public String greeting(@AuthenticationPrincipal UserDetailsAdapter user) {
+        return "hello " + user.getUsername();
     }
-    /**
-     * ログインAPI
-     * @param request リクエストパラメータ
-     * @return ログイン結果
-     */
-    // @RequestMapping(path = "login", method = RequestMethod.GET, 
-    //     produces = MediaType.APPLICATION_JSON_VALUE +  ";charset=utf-8")
-    @RequestMapping(path="login", method = RequestMethod.GET)
-    public String login(Model model){
-        return "login";
+
+    @GetMapping(path = "echo/{message}")
+    public String getEcho(@PathVariable(name = "message") String message) {
+        return message.toUpperCase();
     }
-    // public LoginResult login(@RequestBody LoginRequest request) {
-    //     return new LoginResult("dummy token.");
-    // }
+
+    @PostMapping(path = "echo", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public String postEcho(@RequestBody Map<String, String> message) {
+        return message.toString();
+    }
+
 }
