@@ -17,6 +17,7 @@
     "ms-azuretools.vscode-docker",
     "ms-vscode.vscode-typescript-tslint-plugin",
     "steoates.autoimport",
-    "alexiv.vscode-angular2-files"
+    "alexiv.vscode-angular2-files",
+    "donjayamanne.git-extension-pack"
   ]
 }
