@@ -3,13 +3,9 @@
 		{
 			"path": "."
 		},
-		{
-			"name": "demo",
-			"path": "demo"
-		}
 	],
 	"settings": {
 		"git.ignoreLimitWarning": true,
-		"java.configuration.updateBuildConfiguration": "interactive"
+		"java.configuration.updateBuildConfiguration": "automatic"
 	}
 }
